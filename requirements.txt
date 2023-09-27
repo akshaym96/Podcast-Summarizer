@@ -1,0 +1,5 @@
+feedparser
+wget
+git+https://github.com/openai/whisper.git
+openai
+tiktoken
