@@ -10,6 +10,15 @@ podcast_feed = feedparser.parse(podcast_feed_url)
 print("The number of podcast entiries are: ", len(podcast_feed.entries))
 
 def download_podcast(podcast_item):
+    """
+    Downloads a podcast episode from the given URL and saves it to the current working directory.
+
+    Args:
+        podcast_item (dict): A dictionary containing information about the podcast episode, including its URL.
+
+    Returns:
+        None
+    """
 
     episode_url = podcast_item.href
     # Extract the episode title from the feed
