@@ -46,9 +46,24 @@ def display_podcast_info(podcast):
     st.title("Podcast Summarizer")
     st.header(podcasts[podcast]["podcast_title"])
 
-    col1, col2 = st.columns(2)
-    col1.image(podcasts[podcast]["podcast_thumbnail"], caption="Thumbnail", use_column_width=True)
-    col2.write(f"Duration: {podcasts[podcast]['podcast_audio_duration']}")
+    # col1, col2 = st.columns(2)
+    # col1.image(podcasts[podcast]["podcast_thumbnail"], caption="Thumbnail", use_column_width=True)
+    # col2.write(f"Duration: {podcasts[podcast]['podcast_audio_duration']}")
+
+    # Set background image with opacity
+    podcast_thumbnail = podcasts[podcast]["podcast_thumbnail"]
+    page_bg_img = '''
+    <style>
+    body {
+    background-image: url(f'{podcast_thumbnail}');
+    background-size: cover;
+    opacity: 0.8;
+    }
+    </style>
+    '''
+    st.markdown(page_bg_img, unsafe_allow_html=True)
+
+    st.image(podcasts[podcast]["podcast_thumbnail"], use_column_width=True)
 
     audio_url = podcasts[podcast]["podcast_audio_url"]
     st.audio(audio_url, format="audio/mp3")
