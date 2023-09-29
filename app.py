@@ -36,15 +36,13 @@ def main(podcasts):
     access_token = st.sidebar.text_input("Enter OpenAI Access Token", type="password")
     rss_feed = st.sidebar.text_input("Enter RSS Feed Link")
 
-    user_input = st.sidebar.text_area("Enter Your Notes", "Write your notes here...")
-
     if st.sidebar.button("Submit"):
         if access_token == "your_access_token":  # Replace with your access token
             st.session_state.selected_podcast = selected_podcast
 
-    display_podcast_info(st.session_state.selected_podcast, user_input)
+    display_podcast_info(st.session_state.selected_podcast)
 
-def display_podcast_info(podcast, user_input):
+def display_podcast_info(podcast):
     st.title("Podcast Summarizer")
     st.header(podcasts[podcast]["podcast_title"])
 
@@ -61,9 +59,6 @@ def display_podcast_info(podcast, user_input):
     st.subheader("Key Points")
     key_points = podcasts[podcast]["podcast_key_points"]
     st.write("\n".join(["- " + point for point in key_points]))
-
-    st.subheader("Your Notes")
-    st.write(user_input)
 
 if __name__ == "__main__":
     podcasts = load_podcasts("JsonContent")
