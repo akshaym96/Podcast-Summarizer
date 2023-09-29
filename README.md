@@ -4,7 +4,7 @@ Summarizing Spotify type podcasts using LLMs through OpenAI APIs
 
 
 <p align="center">
-  <img src="assets/demo.gif">
+  <img src="assets/Demo.gif">
 </p>
 
 This project is a podcast summarizer that uses speech-to-text transcription and natural language processing to generate a summary of a podcast episode. The project consists of several Python scripts and a requirements file.
