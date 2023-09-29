@@ -1,36 +1,30 @@
 import streamlit as st
+import os
+import json
 
-# Sample data for demonstration
-podcasts = {
-    "Podcast 1": {
-        "title": "Title of Podcast 1",
-        "thumbnail": "https://example.com/podcast1_thumbnail.jpg",
-        "duration": "01:30",
-        "audio_url": "https://example.com/podcast1_audio.mp3",
-        "summary": "Summary of Podcast 1...",
-        "key_points": [
-            "Key point 1 from Podcast 1.",
-            "Key point 2 from Podcast 1.",
-            "Key point 3 from Podcast 1."
-        ]
-    },
-    "Podcast 2": {
-        "title": "Title of Podcast 2",
-        "thumbnail": "https://example.com/podcast2_thumbnail.jpg",
-        "duration": "02:15",
-        "audio_url": "https://example.com/podcast2_audio.mp3",
-        "summary": "Summary of Podcast 2...",
-        "key_points": [
-            "Key point 1 from Podcast 2.",
-            "Key point 2 from Podcast 2.",
-            "Key point 3 from Podcast 2."
-        ]
-    }
-}
+def load_podcasts(folder_path):
+    """
+    Iterates through a folder containing jsons and loads as key value, key being enumerated podcast_{i} and value being the json itself
+    
+    Parameters:
+    folder_path (str): The path of the folder containing the json files
+    
+    Returns:
+    dict: A dictionary containing the loaded jsons with keys as enumerated podcast_{i} and values as the json itself
+    """
+    podcasts = {}
+    for i, file_name in enumerate(os.listdir(folder_path)):
+        if file_name.endswith(".json"):
+            with open(os.path.join(folder_path, file_name), "r") as f:
+                podcast = json.load(f)
+                podcasts[f"podcast_{i}"] = podcast
+    return podcasts
 
 # Streamlit app layout
-def main():
+def main(podcasts):
     if "selected_podcast" not in st.session_state:
+
+        # initialize podcasts
         st.session_state.selected_podcast = list(podcasts.keys())[0]  # Initialize with the first podcast
 
     st.sidebar.header("Options")
@@ -47,25 +41,26 @@ def main():
     display_podcast_info(st.session_state.selected_podcast, user_input)
 
 def display_podcast_info(podcast, user_input):
-    st.title("Podcast Details")
-    st.header(podcasts[podcast]["title"])
+    st.title("Podcast Summarizer")
+    st.header(podcasts[podcast]["podcast_title"])
 
     col1, col2 = st.columns(2)
-    col1.image(podcasts[podcast]["thumbnail"], caption="Thumbnail", use_column_width=True)
-    col2.write(f"Duration: {podcasts[podcast]['duration']}")
+    col1.image(podcasts[podcast]["podcast_thumbnail"], caption="Thumbnail", use_column_width=True)
+    col2.write(f"Duration: {podcasts[podcast]['podcast_audio_duration']}")
 
-    audio_url = podcasts[podcast]["audio_url"]
+    audio_url = podcasts[podcast]["podcast_audio_url"]
     st.audio(audio_url, format="audio/mp3")
 
     st.subheader("Summary")
-    st.write(podcasts[podcast]["summary"])
+    st.write(podcasts[podcast]["podcast_summary"])
 
     st.subheader("Key Points")
-    key_points = podcasts[podcast]["key_points"]
+    key_points = podcasts[podcast]["podcast_key_points"]
     st.write("\n".join(["- " + point for point in key_points]))
 
     st.subheader("Your Notes")
     st.write(user_input)
 
 if __name__ == "__main__":
-    main()
+    podcasts = load_podcasts("JsonContent")
+    main(podcasts)
