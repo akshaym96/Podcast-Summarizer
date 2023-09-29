@@ -23,15 +23,19 @@ def load_podcasts(folder_path):
 # Streamlit app layout
 def main(podcasts):
     if "selected_podcast" not in st.session_state:
-
         # initialize podcasts
         st.session_state.selected_podcast = list(podcasts.keys())[0]  # Initialize with the first podcast
 
-    st.sidebar.header("Options")
+    st.sidebar.header("Existing Feed")
     selected_podcast = st.sidebar.selectbox("Select a podcast", list(podcasts.keys()))
 
-    access_token = st.sidebar.text_input("Enter Access Token", type="password")
-    
+    if st.session_state.selected_podcast != selected_podcast:
+        st.session_state.selected_podcast = selected_podcast
+
+    st.sidebar.header("Process new feed")
+    access_token = st.sidebar.text_input("Enter OpenAI Access Token", type="password")
+    rss_feed = st.sidebar.text_input("Enter RSS Feed Link")
+
     user_input = st.sidebar.text_area("Enter Your Notes", "Write your notes here...")
 
     if st.sidebar.button("Submit"):
