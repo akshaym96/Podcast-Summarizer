@@ -2,12 +2,12 @@ import openai
 import json
 import wikipedia
 
-def extract_podcast_guest_info(summary_file_path):
+def extract_podcast_guest_info(podcast_transcript):
     """
     Extracts information about the podcast guest using their full name and the name of the organization they are part of to search for them on Wikipedia or Google.
 
     Args:
-    summary_file_path (str): The path of the file containing the summary of the podcast.
+    episode_transcript (str): transcript of the podcast.
 
     Returns:
     str: The summary of the podcast guest's information retrieved from Wikipedia.
@@ -16,13 +16,10 @@ def extract_podcast_guest_info(summary_file_path):
     Exception: If an error occurs while retrieving the information from Wikipedia.
     """
     try:
-        podcast_summary = ""
-        with open(summary_file_path, 'r') as file:
-            podcast_summary = file.read()
-
+        print("Extracting guest info....")
         completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": podcast_summary}],
+            model="gpt-3.5-turbo-16k",
+            messages=[{"role": "user", "content": podcast_transcript}],
             functions=[
             {
                 "name": "get_podcast_guest_information",
@@ -70,7 +67,7 @@ def extract_podcast_guest_info(summary_file_path):
 
         print ("Podcast Guest is ", first_person)
 
-        guest_info = wikipedia.page(first_person " " + podcast_guest_org + " " + podcast_guest_title, auto_suggest=False)
+        guest_info = wikipedia.page(first_person + " " + podcast_guest_org + " " + podcast_guest_title, auto_suggest=False)
 
         podcast_guest_info = guest_info.summary
 

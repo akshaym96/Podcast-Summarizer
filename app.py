@@ -1,6 +1,8 @@
 import streamlit as st
 import os
 import json
+from utils import downloadPodcast, extractHighlights, extractPeople, summary, transcribe
+import openai
 
 def load_podcasts(folder_path):
     """
@@ -20,8 +22,24 @@ def load_podcasts(folder_path):
                 podcasts[f"podcast_{i}"] = podcast
     return podcasts
 
+def build_podcast_json(episode_local_url, episode_title, episode_transcription, \
+                                     episode_summary, episode_highlights,
+                                     episode_guest):
+
+    podcast = {}
+    podcast["podcast_title"] = episode_title
+    podcast["podcast_thumbnail"] = "assets/today-explained.jpg"
+    podcast["podcast_transcript"] = episode_transcription
+    podcast["podcast_audio_url"] = episode_local_url
+    podcast["podcast_summary"] = episode_summary
+    podcast["podcast_key_points"] = episode_highlights
+    podcast["podcast_guest"] = episode_guest
+
+    return podcast
+
 # Streamlit app layout
 def main(podcasts):
+
     if "selected_podcast" not in st.session_state:
         # initialize podcasts
         st.session_state.selected_podcast = list(podcasts.keys())[0]  # Initialize with the first podcast
@@ -36,22 +54,39 @@ def main(podcasts):
     access_token = st.sidebar.text_input("Enter OpenAI Access Token", type="password")
     rss_feed = st.sidebar.text_input("Enter RSS Feed Link")
 
-    if st.sidebar.button("Submit"):
-        if access_token == "your_access_token":  # Replace with your access token
-            st.session_state.selected_podcast = selected_podcast
+    openai.api_key = access_token
 
-    display_podcast_info(st.session_state.selected_podcast)
+    if st.sidebar.button("Submit"):
+        podcast_feed = downloadPodcast.get_podcast_feed(rss_feed)
+
+        episode_local_url, episode_title = downloadPodcast.download_podcast(podcast_feed[0])
+
+        # episode_transcription = transcribe.transcribe_episode(episode_local_url)
+        episode_transcription = podcasts[st.session_state.selected_podcast]['podcast_transcript']
+
+        episode_summary = summary.summarize_podcast(episode_transcription, os.path.join("summaries", episode_title + ".txt"))
+
+        episode_highlights = extractHighlights.extract_podcast_highlights(episode_transcription)
+
+        episode_guest = extractPeople.extract_podcast_guest_info(episode_transcription)
+
+        podcast = build_podcast_json(episode_local_url, episode_title, episode_transcription, \
+                                     episode_summary, episode_highlights,
+                                     episode_guest)
+
+        st.session_state.selected_podcast = podcast
+
+        display_podcast_info(podcast)
+            
+
+    display_podcast_info(podcasts[st.session_state.selected_podcast])
 
 def display_podcast_info(podcast):
     st.title("Podcast Summarizer")
-    st.header(podcasts[podcast]["podcast_title"])
-
-    # col1, col2 = st.columns(2)
-    # col1.image(podcasts[podcast]["podcast_thumbnail"], caption="Thumbnail", use_column_width=True)
-    # col2.write(f"Duration: {podcasts[podcast]['podcast_audio_duration']}")
+    st.header(podcast["podcast_title"])
 
     # Set background image with opacity
-    podcast_thumbnail = podcasts[podcast]["podcast_thumbnail"]
+    podcast_thumbnail = podcast["podcast_thumbnail"]
     page_bg_img = '''
     <style>
     body {
@@ -63,17 +98,22 @@ def display_podcast_info(podcast):
     '''
     st.markdown(page_bg_img, unsafe_allow_html=True)
 
-    st.image(podcasts[podcast]["podcast_thumbnail"], use_column_width=True)
+    st.image(podcast["podcast_thumbnail"], use_column_width=True)
 
-    audio_url = podcasts[podcast]["podcast_audio_url"]
+    audio_url = podcast["podcast_audio_url"]
     st.audio(audio_url, format="audio/mp3")
 
     st.subheader("Summary")
-    st.write(podcasts[podcast]["podcast_summary"])
+    st.write(podcast["podcast_summary"])
 
     st.subheader("Key Points")
-    key_points = podcasts[podcast]["podcast_key_points"]
+    key_points = podcast["podcast_key_points"]
     st.write("\n".join(["- " + point for point in key_points]))
+
+    if 'podcast_guest' in podcast and podcast["podcast_guest"]:        
+        st.subheader("Guest Info")
+        st.write(podcast["podcast_guest"])
+
 
 if __name__ == "__main__":
     podcasts = load_podcasts("JsonContent")

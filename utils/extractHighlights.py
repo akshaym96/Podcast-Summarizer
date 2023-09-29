@@ -2,7 +2,7 @@ import openai
 import json
 import wikipedia
 
-def extract_podcast_highlights(podcast_file_path):
+def extract_podcast_highlights(podcast_transcript):
     """
     Extracts highlights from a podcast transcript using OpenAI's GPT-3 model.
 
@@ -14,13 +14,10 @@ def extract_podcast_highlights(podcast_file_path):
     """
 
     try:
-        podcast_transcript = ""
-        with open(podcast_file_path, 'r') as file:
-            podcast_transcript = file.read()
-
+        print("Extracting highlights.....")
         # Use OpenAI's GPT-3 model to extract highlights from the podcast transcript
         completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+            model="gpt-3.5-turbo-16k",
             messages=[{"role": "user", "content": podcast_transcript}],
             functions=[
             {
