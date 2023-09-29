@@ -1,9 +1,9 @@
 import openai
 import tiktoken
 
-def summarize_podcast(podcast_transcript_file, output_file):
+def summarize_podcast(podcast_transcript, output_file):
     """
-    This function takes a podcast transcript file and generates a summary of the podcast using the GPT-3.5-Turbo-16k model.
+    This function takes a podcast transcript  and generates a summary of the podcast using the GPT-3.5-Turbo-16k model.
     The summary is then written to an output file and returned as a string.
 
     Args:
@@ -13,12 +13,9 @@ def summarize_podcast(podcast_transcript_file, output_file):
     Returns:
         str: The summary of the podcast as a string.
     """
-    # Load the podcast transcript
-    with open(podcast_transcript_file, "r") as file:
-        podcast_transcript = file.read()
-
+    print("Summarizing......")
     # Encode the transcript using the GPT-3.5-Turbo model
-    enc = tiktoken.encoding_for_model("gpt-3.5-turbo")
+    enc = tiktoken.encoding_for_model("gpt-3.5-turbo-16k")
     encoded_transcript = enc.encode(podcast_transcript)
 
     # Construct the instruction prompt and request
@@ -40,5 +37,7 @@ def summarize_podcast(podcast_transcript_file, output_file):
     # Write the podcast summary to a file
     with open(output_file, "w") as file:
         file.write(podcastSummary)
+
+    print("Summarizing done")
 
     return podcastSummary
