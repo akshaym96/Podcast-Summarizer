@@ -81,17 +81,18 @@ def download_podcast(podcast_feed_item, assets_path="assets"):
     # Remove any invalid characters from the title
     valid_chars = "-_.() %s%s" % (string.ascii_letters, string.digits)
     episode_title = ''.join(char for char in episode_title if char in valid_chars)
-    episode_title = '_'.join(episode_title.split())
+    episode_name = episode_title
+    episode_title = '_'.join(episode_name.split())
 
 
-    episode_name = f"{episode_title}.mp3"
+    episode_filename = f"{episode_title}.mp3"
     
     print ("Item: ", episode_title)
     
     episode_url = podcast_feed_item['episode_audio_url']
 
-    download_podcast_audio(episode_name, episode_url, assets_path)
-    return os.path.join(assets_path,episode_name), episode_title 
+    download_podcast_audio(episode_filename, episode_url, assets_path)
+    return os.path.join(assets_path, episode_filename), episode_name 
 
 # for item in podcast_feed.entries[0].links:
 #     if(item['type'] == 'audio/mpeg'):
