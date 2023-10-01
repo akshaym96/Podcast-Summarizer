@@ -77,6 +77,7 @@ def main(podcasts):
         st.session_state.selected_podcast = podcast
 
         display_podcast_info(podcast)
+        print("Done")
 
         return
 
