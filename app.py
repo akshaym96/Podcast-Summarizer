@@ -61,8 +61,10 @@ def main(podcasts):
 
         episode_local_url, episode_title = downloadPodcast.download_podcast(podcast_feed[0])
 
-        # episode_transcription = transcribe.transcribe_episode(episode_local_url)
-        episode_transcription = podcasts[st.session_state.selected_podcast]['podcast_transcript']
+        episode_transcription = transcribe.transcribe_episode(episode_local_url)
+
+        # Can uncommend below line to demonstrate the capability end to end as an example.
+        # episode_transcription = podcasts[st.session_state.selected_podcast]['podcast_transcript']
 
         episode_summary = summary.summarize_podcast(episode_transcription, os.path.join("summaries", episode_title + ".txt"))
 
