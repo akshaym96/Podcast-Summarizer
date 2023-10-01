@@ -77,7 +77,8 @@ def main(podcasts):
         st.session_state.selected_podcast = podcast
 
         display_podcast_info(podcast)
-            
+
+        return
 
     display_podcast_info(podcasts[st.session_state.selected_podcast])
 
