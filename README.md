@@ -2,11 +2,6 @@
 
 Summarizing Spotify type podcasts using LLMs through OpenAI APIs
 
-<!-- 
-<p align="center">
-  <img src="assets/Demo.gif">
-</p> -->
-
 <p align="center">
   <iframe width="560" height="315" src="assets/Demo.mp4" frameborder="0" allowfullscreen></iframe>
 </p>
